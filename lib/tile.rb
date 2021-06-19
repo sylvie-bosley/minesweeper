@@ -1,9 +1,9 @@
 module Minesweeper
   class Tile
-    attr_reader :hidden, :flagged
+    attr_reader :hidden, :flagged, :bomb
 
     def initialize(bomb)
-      @adjacent_bombs = nil
+      @adjacent_bombs = 0
       @revealed = false
       @flagged = false
       @bomb = bomb
