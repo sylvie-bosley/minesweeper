@@ -17,6 +17,10 @@ module Minesweeper
       @adjacent_mines = adjacent_mines
     end
 
+    def toggle_flag
+      @flagged = !@flagged
+    end
+
     def to_s
       return HIDDEN unless @revealed
       return EMPTY if @adjacent_mines.zero?

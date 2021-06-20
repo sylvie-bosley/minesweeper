@@ -6,6 +6,10 @@ module Minesweeper
       @grid = build_grid(mines, *dimensions)
     end
 
+    def toggle_flag(position)
+      self[position].toggle_flag
+    end
+
     private
 
     def [](position)
