@@ -13,9 +13,8 @@ module Minesweeper
       @mine = mine
     end
 
-    def reveal(adjacent_mines)
+    def reveal
       @revealed = true
-      @adjacent_mines = adjacent_mines
     end
 
     def toggle_flag
