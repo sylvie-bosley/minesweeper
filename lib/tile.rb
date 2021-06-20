@@ -2,7 +2,6 @@ module Minesweeper
   class Tile
     HIDDEN = "#"
     EMPTY = " "
-    private_constant :HIDDEN
 
     attr_reader :revealed, :flagged, :bomb
 
