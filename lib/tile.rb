@@ -3,11 +3,10 @@ module Minesweeper
     HIDDEN = "#"
     EMPTY = " "
 
-    attr_accessor :adjacent_mines
-    attr_reader :revealed, :flagged, :mine
+    attr_reader :adjacent_mines, :revealed, :flagged, :mine
 
-    def initialize(mine)
-      @adjacent_mines = 0
+    def initialize(adjacent_mines, mine)
+      @adjacent_mines = adjacent_mines
       @revealed = false
       @flagged = false
       @mine = mine
