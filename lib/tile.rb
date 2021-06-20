@@ -24,7 +24,7 @@ module Minesweeper
     end
 
     def can_be_revealed?
-      @adjacent_mines.zero? && !@revealed && !@flagged && !@mine
+      !@revealed && !@flagged && !@mine
     end
 
     def to_s

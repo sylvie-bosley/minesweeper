@@ -43,7 +43,7 @@ module Minesweeper
 
         if current_tile.can_be_revealed?
           current_tile.reveal
-          cascade_reveal(neighbor_position)
+          cascade_reveal(neighbor_position) if current_tile.adjacent_mines.zero?
         end
       end
     end
