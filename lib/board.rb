@@ -11,15 +11,34 @@ module Minesweeper
     end
 
     def render
-      overline = "\u203E"
+      line = "\u203E"
+
+      if @cols < 10
+        col_width = 2
+        offset = 1
+        display_width = col_width * @cols + 4
+      else
+        col_width = 3
+        offset = 0
+        display_width = col_width * @cols + 3
+      end
+
+      columns_label = (0...@cols).to_a.map do |label|
+        label.to_s.rjust(col_width)
+      end
+      columns_label = columns_label.join.rjust(display_width - 1)
 
       system("clear")
 
-      puts "   0 1 2 3 4 5 6 7 8"
-      puts "  #{"_" * (2 * @cols + 1)}"
-      @grid.each_with_index { |row, index| puts "#{index} |#{row.join(" ")}|" }
-      puts "  #{overline.force_encoding("utf-8") * (2 * @cols + 1)}"
-      puts "#{@mines - @flags} bombs remain".center(2 * @cols + 3)
+      puts columns_label
+      puts "   #{"_" * (col_width * @cols + offset)}"
+
+      @grid.each_with_index do |row, index|
+        puts "#{index.to_s.rjust(2)} |#{row.join(" " * (col_width - 1))}|"
+      end
+
+      puts "   #{line.force_encoding("utf-8") * (col_width * @cols + offset)}"
+      puts "#{@mines - @flags} bombs remain".center(display_width)
     end
 
     def toggle_flag(position)
