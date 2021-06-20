@@ -23,6 +23,28 @@ module Minesweeper
 
     private
 
+    def find_neighbors(position)
+      row, col = position
+      neighbors = []
+
+      (-1..1).each do |row_offset|
+        (-1..1).each do |col_offset|
+          neighbors << [
+            [
+              [0, row + row_offset].max,
+              @rows - 1
+            ].min,
+            [
+              [0, col + col_offset].max,
+              @cols - 1
+            ].min
+          ]
+        end
+      end
+
+      neighbors.uniq - [position]
+    end
+
     def [](position)
       row, col = position
       @grid[row][col]
