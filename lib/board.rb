@@ -10,6 +10,18 @@ module Minesweeper
       @flags = 0
     end
 
+    def render
+      overline = "\u203E"
+
+      system("clear")
+
+      puts "   0 1 2 3 4 5 6 7 8"
+      puts "  #{"_" * (2 * @cols + 1)}"
+      @grid.each_with_index { |row, index| puts "#{index} |#{row.join(" ")}|" }
+      puts "  #{overline.force_encoding("utf-8") * (2 * @cols + 1)}"
+      puts "#{@mines - @flags} bombs remain".center(2 * @cols + 3)
+    end
+
     def toggle_flag(position)
       tile = self[position]
 
