@@ -12,33 +12,23 @@ module Minesweeper
 
     def render
       line = "\u203E"
-
-      if @cols < 10
-        col_width = 2
-        offset = 1
-        display_width = col_width * @cols + 4
-      else
-        col_width = 3
-        offset = 0
-        display_width = col_width * @cols + 3
-      end
-
-      columns_label = (0...@cols).to_a.map do |label|
-        label.to_s.rjust(col_width)
-      end
-      columns_label = columns_label.join.rjust(display_width - 1)
+      col_width, board_width, display_width = generate_formatting_widths
+      columns_label = generate_cols_label(col_width, display_width)
+      board_top = "#{"_" * (board_width)}"
+      board_bottom = "#{line.force_encoding("utf-8") * (board_width)}"
+      remaining_mines = "#{@mines - @flags} mines remain"
 
       system("clear")
 
       puts columns_label
-      puts "   #{"_" * (col_width * @cols + offset)}"
+      puts board_top.rjust(display_width)
 
       @grid.each_with_index do |row, index|
-        puts "#{index.to_s.rjust(2)} |#{row.join(" " * (col_width - 1))}|"
+        puts "#{index.to_s.rjust(2)} |#{parse_row(row, col_width)}|"
       end
 
-      puts "   #{line.force_encoding("utf-8") * (col_width * @cols + offset)}"
-      puts "#{@mines - @flags} bombs remain".center(display_width)
+      puts board_bottom.rjust(display_width)
+      puts remaining_mines.center(display_width)
     end
 
     def toggle_flag(position)
@@ -65,6 +55,38 @@ module Minesweeper
     end
 
     private
+
+    def generate_formatting_widths
+      if @cols < 10
+        col_width = 2
+      else
+        col_width = 3
+      end
+
+      board_width = col_width * (@cols - 1) + 3
+      display_width = board_width + 3
+
+      [col_width, board_width, display_width]
+    end
+
+    def generate_cols_label(col_width, display_width)
+      label = (0...@cols).to_a.map do |label|
+        label.to_s.rjust(col_width)
+      end
+
+      label.join.rjust(display_width - 1)
+    end
+
+    def parse_row(row, col_width)
+      parsed_row = row.map.with_index do |tile, col_index|
+        if col_index.zero?
+          tile.to_s
+        else
+          tile.to_s.rjust(col_width) unless col_index.zero?
+        end
+      end
+      parsed_row.join
+    end
 
     def cascade_reveal(tile_position)
       neighbor_positions = find_neighbors(tile_position)
