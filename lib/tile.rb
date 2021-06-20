@@ -28,7 +28,7 @@ module Minesweeper
 
     def to_s
       return HIDDEN unless @revealed
-      return EMPTY if @adjacent_mines.zero?
+      return EMPTY if @adjacent_mines.zero? && !@mine
       return MINE if @mine
       @adjacent_mines.to_s
     end
