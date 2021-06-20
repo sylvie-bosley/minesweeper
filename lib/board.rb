@@ -3,5 +3,10 @@ module Minesweeper
     def initialize(tiles)
       @grid = tiles
     end
+
+    def [](position)
+      row, col = position
+      @grid[row][col]
+    end
   end
 end
