@@ -81,11 +81,7 @@ module Minesweeper
 
       @rows.times do |row|
         @cols.times do |col|
-          if mine_positions.include?([row, col])
-            new_grid[row][col] = Tile.new(true)
-          else
-            new_grid[row][col] = Tile.new(false)
-          end
+          new_grid[row][col] = create_tile([row, col], mine_positions)
         end
       end
 
@@ -101,6 +97,24 @@ module Minesweeper
       end
 
       positions
+    end
+
+    def create_tile(position, mine_positions)
+      adjacent_mines = count_adjacent_mines(position, mine_positions)
+
+      if mine_positions.include?(position)
+        Tile.new(adjacent_mines, true)
+      else
+        Tile.new(adjacent_mines, false)
+      end
+    end
+
+    def count_adjacent_mines(position, mine_positions)
+      neighbor_positions = find_neighbors(position)
+
+      neighbor_positions.count do |neighbor_position|
+        mine_positions.include?(neighbor_position)
+      end
     end
   end
 end
