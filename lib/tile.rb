@@ -3,7 +3,8 @@ module Minesweeper
     HIDDEN = "#"
     EMPTY = " "
     MINE = "@"
-    private_constant :HIDDEN, :EMPTY, :MINE
+    FLAG = "?"
+    private_constant :HIDDEN, :EMPTY, :MINE, :FLAG
 
     attr_reader :adjacent_mines, :revealed, :flagged, :mine
 
@@ -27,6 +28,7 @@ module Minesweeper
     end
 
     def to_s
+      return FLAG if @flagged
       return HIDDEN unless @revealed
       return MINE if @mine
       return EMPTY if @adjacent_mines.zero?
