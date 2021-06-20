@@ -3,7 +3,7 @@ module Minesweeper
     HIDDEN = "#"
     EMPTY = " "
 
-    attr_writer :adjacent_mines
+    attr_accessor :adjacent_mines
     attr_reader :revealed, :flagged, :mine
 
     def initialize(mine)
