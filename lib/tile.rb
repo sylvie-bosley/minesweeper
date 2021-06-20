@@ -32,10 +32,6 @@ module Minesweeper
       end
     end
 
-    def can_be_revealed?
-      !@revealed && !@flagged && !@mine
-    end
-
     def will_cascade?
       !mine && @adjacent_mines.zero?
     end
