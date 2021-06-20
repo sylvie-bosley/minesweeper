@@ -9,10 +9,13 @@ module Minesweeper
     end
 
     def toggle_flag(position)
-      if self[position].toggle_flag
-        @flags += 1
+      tile = self[position]
+      if tile.revealed
+        puts "Cannot flag a revealed tile!"
       else
-        @flags -= 1
+        tile.toggle_flag
+        @flags += 1 if tile.flagged
+        @flags -= 1 unless tile.flagged
       end
     end
 
