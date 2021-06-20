@@ -21,6 +21,10 @@ module Minesweeper
       @flagged = !@flagged
     end
 
+    def can_be_revealed?
+      @adjacent_mines.zero? && !@revealed && !@flagged && !@mine
+    end
+
     def to_s
       return HIDDEN unless @revealed
       return EMPTY if @adjacent_mines.zero?
