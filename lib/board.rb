@@ -6,12 +6,12 @@ module Minesweeper
       @grid = build_grid(mines, *dimensions)
     end
 
+    private
+
     def [](position)
       row, col = position
       @grid[row][col]
     end
-
-    private
 
     def build_grid(mines, rows, cols)
       new_grid = Array.new(rows) { Array.new(cols) }
