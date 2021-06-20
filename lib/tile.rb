@@ -16,15 +16,28 @@ module Minesweeper
     end
 
     def reveal
-      @revealed = true
+      if @flagged || @revealed
+        return false
+      else
+        @revealed = true
+      end
     end
 
     def toggle_flag
-      @flagged = !@flagged
+      if @revealed
+        return false
+      else
+        @flagged = !@flagged
+        true
+      end
     end
 
     def can_be_revealed?
       !@revealed && !@flagged && !@mine
+    end
+
+    def will_cascade?
+      !mine && @adjacent_mines.zero?
     end
 
     def to_s

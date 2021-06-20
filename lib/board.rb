@@ -34,10 +34,12 @@ module Minesweeper
     def toggle_flag(position)
       tile = self[position]
 
-      unless tile.revealed
-        tile.toggle_flag
-        @flags += 1 if tile.flagged
-        @flags -= 1 unless tile.flagged
+      if tile.toggle_flag
+        if tile.flagged
+          @flags += 1
+        else
+          @flags -= 1
+        end
       end
 
       tile.to_s
@@ -46,9 +48,8 @@ module Minesweeper
     def reveal(position)
       tile = self[position]
 
-      unless tile.flagged || tile.revealed
-        tile.reveal
-        cascade_reveal(position) unless tile.adjacent_mines > 0 || tile.mine
+      if tile.reveal && tile.will_cascade?
+        cascade_reveal(position)
       end
 
       tile.to_s
@@ -92,12 +93,8 @@ module Minesweeper
       neighbor_positions = find_neighbors(tile_position)
 
       neighbor_positions.each do |neighbor_position|
-        current_tile = self[neighbor_position]
-
-        if current_tile.can_be_revealed?
-          current_tile.reveal
-          cascade_reveal(neighbor_position) if current_tile.adjacent_mines.zero?
-        end
+        next if self[neighbor_position].mine
+        reveal(neighbor_position)
       end
     end
 
