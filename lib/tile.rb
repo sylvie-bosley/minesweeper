@@ -3,24 +3,24 @@ module Minesweeper
     HIDDEN = "#"
     EMPTY = " "
 
-    attr_reader :revealed, :flagged, :bomb
+    attr_reader :revealed, :flagged, :mine
 
-    def initialize(bomb)
-      @adjacent_bombs = 0
+    def initialize(mine)
+      @adjacent_mines = 0
       @revealed = false
       @flagged = false
-      @bomb = bomb
+      @mine = mine
     end
 
-    def reveal!(adjacent_bombs)
+    def reveal!(adjacent_mines)
       @revealed = true
-      @adjacent_bombs = adjacent_bombs
+      @adjacent_mines = adjacent_mines
     end
 
     def to_s
       return HIDDEN unless @revealed
-      return EMPTY if @adjacent_bombs.zero?
-      @adjacent_bombs.to_s
+      return EMPTY if @adjacent_mines.zero?
+      @adjacent_mines.to_s
     end
   end
 end
