@@ -4,10 +4,16 @@ module Minesweeper
   class Board
     def initialize(dimensions, mines)
       @grid = build_grid(mines, *dimensions)
+      @mines = mines
+      @flags = 0
     end
 
     def toggle_flag(position)
-      self[position].toggle_flag
+      if self[position].toggle_flag
+        @flags += 1
+      else
+        @flags -= 1
+      end
     end
 
     private
