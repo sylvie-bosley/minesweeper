@@ -1,3 +1,5 @@
+# Credit to Github user Anthony Cook https://gist.github.com/acook/4190379
+
 require 'io/console'
 
 module Keypress
