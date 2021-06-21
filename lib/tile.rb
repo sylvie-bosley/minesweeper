@@ -21,7 +21,7 @@ module Minesweeper
     HIDDEN = "#"
     EMPTY = " "
     MINE = "@"
-    FLAG = "?"
+    FLAG = "F"
     private_constant :HIDDEN, :EMPTY, :MINE, :FLAG
 
     attr_reader :adjacent_mines, :revealed, :flagged, :mine
