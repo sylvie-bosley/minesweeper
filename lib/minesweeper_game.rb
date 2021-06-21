@@ -71,6 +71,8 @@ module Minesweeper
         @board.reveal(position)
       when "flag"
         @board.toggle_flag(position)
+      when "save"
+        @board.save_game
       else
         show_help
       end
@@ -84,10 +86,12 @@ module Minesweeper
            "number of\n\t\tadjacent tiles that contain mines.\n\tFlag - flag/"\
            "unflag a suspected mine.\n\t\tFlagged tiles cannot be revealed "\
            "until they are\n\t\tunflagged so you won't accidentally reveal "\
-           "them.\n\nYou may enter commands using just their first letter too."\
-           "\n\nEach command must be followed by row and column numbers "\
-           "separated\nby a comma. Examples:\n\n\treveal 14,2\n\tf 2,0\n\n"\
-           "Press ENTER to return..."
+           "them.\n\tSave - save your game for later loading.\n\t\tTo load a "\
+           "save file use the -l argument followed\n\t\tby the file to load "\
+           "from when launching the game.\n\nYou may enter commands using just"\
+           " their first letter too.\n\nEach command must be followed by row "\
+           "and column numbers separated\nby a comma. Examples:\n\n\treveal "\
+           "14,2\n\tf 2,0\n\nPress ENTER to return..."
       gets
     end
 
@@ -105,7 +109,7 @@ module Minesweeper
 
     def valid_input?(input)
       command, position = input.split(" ")
-      return true if command == "help"
+      return true if command == "help" || command == "save"
       return false if position.nil?
 
       position = position.split(",")
@@ -124,6 +128,9 @@ module Minesweeper
         command = "reveal"
       when "flag", "f"
         command = "flag"
+      when "save", "s"
+        command = "save"
+        return [command, nil]
       else
         command = "help"
         return [command, nil]
