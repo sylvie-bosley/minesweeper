@@ -73,25 +73,42 @@ module Minesweeper
         @board.toggle_flag(position)
       when "save"
         @board.save_game
+      when "exit"
+        if confirm_exit
+          exit 0
+        end
       else
         show_help
       end
     end
 
+    def confirm_exit
+      confirmation = ""
+      until ["yes", "y", "no", "n"].include?(confirmation)
+        puts "All unsaved progress will be lost"
+        puts "Are you sure you would like to exit, yes or no?"
+        print "> "
+        confirmation = gets.chomp.downcase
+      end
+
+      confirmation == "yes" || confirmation == "y"
+    end
+
     def show_help
       system("clear")
-      puts "You must reveal all the safe tiles, but watch out because\n"\
-           "revealing a mine means game over!\n\nAvailable commands:\n\n\t"\
-           "Reveal - reveal a tile.\n\t\tThe number on the tile indicates the "\
-           "number of\n\t\tadjacent tiles that contain mines.\n\tFlag - flag/"\
-           "unflag a suspected mine.\n\t\tFlagged tiles cannot be revealed "\
-           "until they are\n\t\tunflagged so you won't accidentally reveal "\
-           "them.\n\tSave - save your game for later loading.\n\t\tTo load a "\
-           "save file use the -l argument followed\n\t\tby the file to load "\
-           "from when launching the game.\n\nYou may enter commands using just"\
-           " their first letter too.\n\nEach command must be followed by row "\
-           "and column numbers separated\nby a comma. Examples:\n\n\treveal "\
-           "14,2\n\tf 2,0\n\nPress ENTER to return..."
+      print "You must reveal all the safe tiles, but watch out because\n"\
+            "revealing a mine means game over!\n\nAvailable commands:\n\n\t"\
+            "Reveal - reveal a tile.\n\t\tThe number on the tile indicates the"\
+            " number of\n\t\tadjacent tiles that contain mines.\n\tFlag - flag"\
+            "/unflag a suspected mine.\n\t\tFlagged tiles cannot be revealed "\
+            "until they are\n\t\tunflagged so you won't accidentally reveal "\
+            "them.\n\tSave - save your game for later loading.\n\t\tTo load a "\
+            "save file use the -l argument followed\n\t\tby the file to load "\
+            "from when launching the game.\n\tExit - exits the game\n\nYou "\
+            "may enter commands using just their first letter too.\n\nEach "\
+            "command must be followed by row and column numbers separated\nby "\
+            "a comma. Examples:\n\n\treveal 14,2\n\tf 2,0\n\nPress ENTER to "\
+            "return..."
       gets
     end
 
@@ -109,7 +126,7 @@ module Minesweeper
 
     def valid_input?(input)
       command, position = input.split(" ")
-      return true if command == "help" || command == "save"
+      return true if command == "help" || command == "save" || command == "exit"
       return false if position.nil?
 
       position = position.split(",")
@@ -130,6 +147,9 @@ module Minesweeper
         command = "flag"
       when "save", "s"
         command = "save"
+        return [command, nil]
+      when "exit", "e"
+        command = "exit"
         return [command, nil]
       else
         command = "help"
