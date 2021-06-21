@@ -85,12 +85,6 @@ module Minesweeper
       safe_tiles == @grid.inject(0) { |acc, row| acc + row.count(&:revealed) }
     end
 
-    def save_game(save_name)
-      File.open("save_games/#{save_name}.sav", "w") do |save_file|
-        YAML.dump(self, save_file)
-      end
-    end
-
     private
 
     def generate_formatting_widths
