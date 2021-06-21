@@ -14,7 +14,9 @@
 #     You should have received a copy of the GNU General Public License
 #     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-# I can be reached by email at pierce-bosley@gmail.comrequire_relative "board"
+# I can be reached by email at pierce-bosley@gmail.com
+
+require_relative "board"
 
 module Minesweeper
   DIFFICULTY_LEVELS = {
