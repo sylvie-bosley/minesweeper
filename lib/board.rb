@@ -55,6 +55,11 @@ module Minesweeper
       tile.to_s
     end
 
+    def valid_position?(position)
+      row, col = position
+      (0...@rows).include?(row) && (0...@cols).include?(col)
+    end
+
     private
 
     def generate_formatting_widths
