@@ -7,6 +7,7 @@ module Minesweeper
     "expert" => [[16,	30],	99]
   }
   COMMANDS = ["flag", "f", "reveal", "r", "help"]
+  private_constant :DIFFICULTY_LEVELS, :COMMANDS
 
   class MineGame
     def self.get_difficulty
