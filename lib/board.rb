@@ -47,6 +47,7 @@ module Minesweeper
 
       puts board_bottom.rjust(display_width)
       puts remaining_mines.center(display_width)
+      puts
     end
 
     def toggle_flag(position)
