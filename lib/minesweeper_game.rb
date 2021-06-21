@@ -34,6 +34,7 @@ module Minesweeper
       until DIFFICULTY_LEVELS.has_key?(difficulty)
         puts "Choose a difficulty level:"
         puts "beginner, intermediate, or expert"
+        print "> "
         difficulty = gets.chomp.downcase
       end
 
@@ -55,6 +56,7 @@ module Minesweeper
 
       until valid_input?(action)
         puts "Enter an action (or \"help\" for instructions)"
+        print "> "
         action = gets.chomp.downcase
       end
 
@@ -84,6 +86,7 @@ module Minesweeper
         command = "flag"
       else
         command = "help"
+        return [command, nil]
       end
       position = temp_position.split(",").map(&:to_i)
 
