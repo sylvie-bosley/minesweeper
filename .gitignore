@@ -57,3 +57,4 @@ build-iPhoneSimulator/
 
 # My additions
 /lib/keypress.rb
+*.sav
