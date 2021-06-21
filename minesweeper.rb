@@ -18,6 +18,35 @@
 
 require_relative "lib/minesweeper_game"
 
+system("clear")
+puts "Pierce's Minesweeper  Copyright (C) 2021  Thomas Pierce Bosley\n"\
+     "This program comes with ABSOLUTELY NO WARRANTY; for details type "\
+     "`warranty'.\nThis is free software, and you are welcome to redistribute "\
+     "it under\ncertain conditions; see the source code for copying conditions."
+print "> "
+copyright_input = gets.chomp
+
+if copyright_input == "warranty"
+  system("clear")
+  puts "15. Disclaimer of Warranty.\n\n"\
+       "  THERE IS NO WARRANTY FOR THE PROGRAM, TO THE EXTENT PERMITTED BY\n"\
+       "APPLICABLE LAW.  EXCEPT WHEN OTHERWISE STATED IN WRITING THE "\
+       "COPYRIGHT\nHOLDERS AND/OR OTHER PARTIES PROVIDE THE PROGRAM \"AS IS\""\
+       " WITHOUT WARRANTY\nOF ANY KIND, EITHER EXPRESSED OR IMPLIED, "\
+       "INCLUDING, BUT NOT LIMITED TO,\nTHE IMPLIED WARRANTIES OF "\
+       "MERCHANTABILITY AND FITNESS FOR A PARTICULAR\nPURPOSE.  THE ENTIRE "\
+       "RISK AS TO THE QUALITY AND PERFORMANCE OF THE PROGRAM\nIS WITH YOU. "\
+       " SHOULD THE PROGRAM PROVE DEFECTIVE, YOU ASSUME THE COST OF\nALL "\
+       "NECESSARY SERVICING, REPAIR OR CORRECTION.\n\n"\
+       "You should have received a copy of the GNU General Public License "\
+       "along\nwith this program. If you did not, the terms can be found "\
+       "at:\n\n    https://www.gnu.org/licenses/licenses.en.html"
+  puts
+  print "> "
+  gets
+end
+
+system("clear")
 difficulty = Minesweeper::MineGame.get_difficulty
 game = Minesweeper::MineGame.new(difficulty)
 game.run
