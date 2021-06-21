@@ -87,7 +87,7 @@ module Minesweeper
            "them.\n\nYou may enter commands using just their first letter too."\
            "\n\nEach command must be followed by row and column numbers "\
            "separated\nby a comma. Examples:\n\n\treveal 14,2\n\tf 2,0\n\n"\
-           "Press any key to return..."
+           "Press ENTER to return..."
       gets
     end
 
