@@ -20,15 +20,18 @@ require "zaru"
 require_relative "board"
 
 module Minesweeper
-  DIFFICULTY_LEVELS = {
-    "beginner" => [[9, 9], 10],
-    "intermediate" => [[16, 16],	40],
-    "expert" => [[16,	30],	99]
-  }
-  COMMANDS = ["flag", "f", "reveal", "r", "help"]
-  private_constant :DIFFICULTY_LEVELS, :COMMANDS
-
   class MineGame
+    DIFFICULTY_LEVELS = {
+      "beginner" => [[9, 9], 10],
+      "intermediate" => [[16, 16],	40],
+      "expert" => [[16,	30],	99]
+    }
+    POSITION_COMMANDS = ["flag", "f", "reveal", "r"]
+    POSITIONLESS_COMMANDS = ["save", "s", "exit", "e", "help", "h"]
+    VALID_YESNO = ["yes", "y", "no", "n"]
+    private_constant :DIFFICULTY_LEVELS, :POSITION_COMMANDS,
+                    :POSITIONLESS_COMMANDS, :VALID_YESNO
+
     def self.get_difficulty
       difficulty = ""
 
@@ -103,7 +106,7 @@ module Minesweeper
       return true unless File.exist?("save_games/#{save_name}.sav")
 
       confirmation = ""
-      until ["yes", "y", "no", "n"].include?(confirmation)
+      until VALID_YESNO.include?(confirmation)
         puts "File already exists"
         puts "Would you like to overwrite, yes or no?"
         print "> "
@@ -115,7 +118,7 @@ module Minesweeper
 
     def confirm_exit?
       confirmation = ""
-      until ["yes", "y", "no", "n"].include?(confirmation)
+      until VALID_YESNO.include?(confirmation)
         puts "All unsaved progress will be lost"
         puts "Are you sure you would like to exit, yes or no?"
         print "> "
@@ -157,7 +160,7 @@ module Minesweeper
 
     def valid_input?(input)
       command, position = input.split(" ")
-      return true if command == "help" || command == "save" || command == "exit"
+      return true if POSITIONLESS_COMMANDS.include?(command)
       return false if position.nil?
 
       position = position.split(",")
@@ -165,7 +168,9 @@ module Minesweeper
 
       row, col = position
       return false unless row.match?(/^\d+$/) && col.match?(/^\d+$/)
-      COMMANDS.include?(command) && @board.valid_position?(position.map(&:to_i))
+
+      POSITION_COMMANDS.include?(command) &&
+        @board.valid_position?(position.map(&:to_i))
     end
 
     def parse_action(action)
