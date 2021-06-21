@@ -72,8 +72,23 @@ module Minesweeper
       when "flag"
         @board.toggle_flag(position)
       else
-        # show_help
+        show_help
       end
+    end
+
+    def show_help
+      system("clear")
+      puts "You must reveal all the safe tiles, but watch out because\n"\
+           "revealing a mine means game over!\n\nAvailable commands:\n\n\t"\
+           "Reveal - reveal a tile.\n\t\tThe number on the tile indicates the "\
+           "number of\n\t\tadjacent tiles that contain mines.\n\tFlag - flag/"\
+           "unflag a suspected mine.\n\t\tFlagged tiles cannot be revealed "\
+           "until they are\n\t\tunflagged so you won't accidentally reveal "\
+           "them.\n\nYou may enter commands using just their first letter too."\
+           "\n\nEach command must be followed by row and column numbers "\
+           "separated\nby a comma. Examples:\n\n\treveal 14,2\n\tf 2,0\n\n"\
+           "Press any key to return..."
+      gets
     end
 
     def get_player_action
