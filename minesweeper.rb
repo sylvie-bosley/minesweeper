@@ -1,10 +1,8 @@
-module Minesweeper
-  class MineGame
-    def initialize
+require_relative "lib/minesweeper_game"
 
-    end
-  end
-end
+include Minesweeper
 
-game = Minesweeper::MineGame.new
+difficulty = MineGame.get_difficulty
+
+game = MineGame.new(difficulty)
 game.run
