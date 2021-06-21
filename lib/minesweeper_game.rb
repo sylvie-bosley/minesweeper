@@ -21,16 +21,19 @@ require_relative "board"
 
 module Minesweeper
   class MineGame
+    SAVE_FOLDER = "saved_games/"
+    SAVE_EXT = ".sav"
+
     DIFFICULTY_LEVELS = {
       "beginner" => [[9, 9], 10],
       "intermediate" => [[16, 16],	40],
       "expert" => [[16,	30],	99]
     }
+    VALID_YESNO = ["yes", "y", "no", "n"]
     POSITION_COMMANDS = ["flag", "f", "reveal", "r"]
     POSITIONLESS_COMMANDS = ["save", "s", "exit", "e", "help", "h"]
-    VALID_YESNO = ["yes", "y", "no", "n"]
-    private_constant :DIFFICULTY_LEVELS, :POSITION_COMMANDS,
-                    :POSITIONLESS_COMMANDS, :VALID_YESNO
+    private_constant :DIFFICULTY_LEVELS, :VALID_YESNO, :POSITION_COMMANDS,
+                     :POSITIONLESS_COMMANDS
 
     def self.get_difficulty
       difficulty = ""
@@ -45,8 +48,12 @@ module Minesweeper
       DIFFICULTY_LEVELS[difficulty]
     end
 
-    def initialize(difficulty)
-      @board = Board.new(*difficulty)
+    def initialize(difficulty, save_file)
+      if save_file.nil?
+        @board = Board.new(*difficulty)
+      else
+        @board = load_save_game(save_file)
+      end
     end
 
     def run
@@ -69,6 +76,35 @@ module Minesweeper
 
     private
 
+    def load_save_game(save_file)
+      begin
+        YAML.load(File.read(save_file))
+      rescue Errno::ENOENT
+        puts "Requested save game does not exist!"
+        print "Press ENTER to exit..."
+        gets
+        exit 1
+      rescue IOError, SystemCallError
+        puts "An unknown error occurred while trying to load the game."
+        print "Press ENTER to exit..."
+        gets
+        exit 1
+      end
+    end
+
+    def save_game(save_name)
+      begin
+        File.open("#{SAVE_FOLDER}#{save_name}#{SAVE_EXT}", "w") do |save_file|
+          YAML.dump(@board, save_file)
+        end
+      rescue IOError, SystemCallError
+        puts "An unknown error occurred while trying to save the game."
+        puts "Game was not saved!"
+        print "Press ENTER to return..."
+        gets
+      end
+    end
+
     def perform_action(command, position)
       case command
       when "reveal"
@@ -82,7 +118,7 @@ module Minesweeper
         return if save_name.empty?
 
         if confirm_save?(save_name)
-          @board.save_game(save_name)
+          save_game(save_name)
         end
       when "exit"
         @board.render
@@ -103,7 +139,7 @@ module Minesweeper
     end
 
     def confirm_save?(save_name)
-      return true unless File.exist?("save_games/#{save_name}.sav")
+      return true unless File.exist?("saved_games/#{save_name}.sav")
 
       confirmation = ""
       until VALID_YESNO.include?(confirmation)
@@ -137,12 +173,12 @@ module Minesweeper
             "/unflag a suspected mine.\n\t\tFlagged tiles cannot be revealed "\
             "until they are\n\t\tunflagged so you won't accidentally reveal "\
             "them.\n\tSave - save your game for later loading.\n\t\tTo load a "\
-            "save file use the -l argument followed\n\t\tby the file to load "\
-            "from when launching the game.\n\tExit - exits the game\n\nYou "\
-            "may enter commands using just their first letter too.\n\nEach "\
-            "command must be followed by row and column numbers separated\nby "\
-            "a comma. Examples:\n\n\treveal 14,2\n\tf 2,0\n\nPress ENTER to "\
-            "return..."
+            "save game use the -l argument, followed\n\t\tby the name of the "\
+            "game to load, when launching the game.\n\tExit - exits the game\n"\
+            "\nYou may enter commands using just their first letter too.\n\n"\
+            "Each command must be followed by row and column numbers separated"\
+            "\nby a comma. Examples:\n\n\treveal 14,2\n\tf 2,0\n\nPress ENTER "\
+            "to return..."
       gets
     end
 

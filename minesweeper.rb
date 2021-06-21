@@ -18,6 +18,11 @@
 
 require_relative "lib/minesweeper_game"
 
+include Minesweeper
+
+save_name = ARGV.shift.strip if ARGV.shift == "-l"
+ARGV.clear
+
 system("clear")
 puts "Pierce's Minesweeper  Copyright (C) 2021  Thomas Pierce Bosley\n"\
      "This program comes with ABSOLUTELY NO WARRANTY; for details type "\
@@ -45,8 +50,16 @@ if copyright_input == "warranty"
   print "> "
   gets
 end
-
 system("clear")
-difficulty = Minesweeper::MineGame.get_difficulty
-game = Minesweeper::MineGame.new(difficulty)
+
+if save_name.nil?
+  save_file = nil
+  difficulty = MineGame.get_difficulty
+else
+  sanitized_name = Zaru.sanitize!(save_name, fallback: "")
+  save_file = "#{MineGame::SAVE_FOLDER}#{sanitized_name}#{MineGame::SAVE_EXT}"
+  difficulty = nil
+end
+
+game = MineGame.new(difficulty, save_file)
 game.run
