@@ -46,10 +46,26 @@ module Minesweeper
     end
 
     def run
-      player_action = get_player_action
+      game_over = false
+      until game_over
+        @board.render
+        player_action = get_player_action
+        action_result = perform_action(*player_action)
+      end
     end
 
     private
+
+    def perform_action(command, position)
+      case command
+      when "reveal"
+        @board.reveal(position)
+      when "flag"
+        @board.toggle_flag(position)
+      else
+        # show_help
+      end
+    end
 
     def get_player_action
       action = ""
