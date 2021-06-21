@@ -33,6 +33,15 @@ module Minesweeper
       @mine = mine
     end
 
+    def inspect
+      {
+        'adjacent_mines' => @adjacent_mines,
+        'flagged' => @flagged,
+        'mine' => @mine,
+        'revealed' => @revealed
+      }.inspect
+    end
+
     def reveal
       if @flagged || @revealed
         return false
