@@ -16,6 +16,7 @@
 
 # I can be reached by email at pierce-bosley@gmail.com
 
+require "zaru"
 require_relative "board"
 
 module Minesweeper
@@ -72,9 +73,18 @@ module Minesweeper
       when "flag"
         @board.toggle_flag(position)
       when "save"
-        @board.save_game
+        @board.render
+
+        save_name = get_save_name
+        return if save_name.empty?
+
+        if confirm_save?(save_name)
+          @board.save_game(save_name)
+        end
       when "exit"
-        if confirm_exit
+        @board.render
+
+        if confirm_exit?
           exit 0
         end
       else
@@ -82,7 +92,28 @@ module Minesweeper
       end
     end
 
-    def confirm_exit
+    def get_save_name
+      puts "Enter a name for the save"
+      puts "or press ENTER to return"
+      print "> "
+      Zaru.sanitize!(gets.chomp, fallback: "")
+    end
+
+    def confirm_save?(save_name)
+      return true unless File.exist?("save_games/#{save_name}.sav")
+
+      confirmation = ""
+      until ["yes", "y", "no", "n"].include?(confirmation)
+        puts "File already exists"
+        puts "Would you like to overwrite, yes or no?"
+        print "> "
+        confirmation = gets.chomp.downcase
+      end
+
+      confirmation == "yes" || confirmation == "y"
+    end
+
+    def confirm_exit?
       confirmation = ""
       until ["yes", "y", "no", "n"].include?(confirmation)
         puts "All unsaved progress will be lost"
