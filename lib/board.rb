@@ -79,6 +79,11 @@ module Minesweeper
       (0...@rows).include?(row) && (0...@cols).include?(col)
     end
 
+    def all_mines_found?
+      safe_tiles = (@rows * @cols) - @mines
+      safe_tiles == @grid.inject(0) { |acc, row| acc + row.count(&:revealed) }
+    end
+
     private
 
     def generate_formatting_widths

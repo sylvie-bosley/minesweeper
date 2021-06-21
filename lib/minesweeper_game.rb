@@ -53,6 +53,12 @@ module Minesweeper
         action_result = perform_action(*player_action)
         if action_result == "@"
           game_over = true
+          @board.render
+          puts "Game over!"
+        elsif @board.all_mines_found?
+          game_over = true
+          @board.render
+          puts "You win!"
         end
       end
     end
