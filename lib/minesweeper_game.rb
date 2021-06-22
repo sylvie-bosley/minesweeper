@@ -28,8 +28,11 @@ module Minesweeper
 
     DIFFICULTY_LEVELS = {
       "beginner" => [[9, 9], 10],
+      "b" => [[9, 9], 10],
       "intermediate" => [[16, 16],	40],
-      "expert" => [[16,	30],	99]
+      "i" => [[16, 16],	40],
+      "expert" => [[16,	30],	99],
+      "e" => [[16,	30],	99]
     }
     VALID_YESNO = ["yes", "y", "no", "n"]
     POSITION_COMMANDS = ["flag", "f", "reveal", "r"]
@@ -42,7 +45,7 @@ module Minesweeper
 
       until DIFFICULTY_LEVELS.has_key?(difficulty)
         puts "Choose a difficulty level:"
-        puts "beginner, intermediate, or expert"
+        puts "(b)eginner, (i)ntermediate, or (e)xpert"
         print "> "
         difficulty = gets.chomp.downcase
       end
