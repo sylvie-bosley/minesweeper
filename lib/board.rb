@@ -29,6 +29,7 @@ module Minesweeper
       @grid = build_grid(mines)
       @mines = mines
       @flags = 0
+      @cursor_position = [0, 0]
     end
 
     def render
@@ -41,10 +42,10 @@ module Minesweeper
 
       puts columns_label
 
-      @grid.each_with_index do |row, index|
+      @grid.each_with_index do |row, row_index|
         puts divider_row
-        board_row = "#{board_side}#{parse_row(row)}#{board_side}"
-        puts "#{index.to_s.rjust(2)} #{board_row}"
+        board_row = "#{board_side}#{parse_row(row, row_index)}#{board_side}"
+        puts "#{row_index.to_s.rjust(2)} #{board_row}"
       end
       puts divider_row
 
@@ -52,8 +53,8 @@ module Minesweeper
       puts
     end
 
-    def toggle_flag(position)
-      tile = self[position]
+    def toggle_flag
+      tile = self[@cursor_position]
 
       if tile.toggle_flag
         if tile.flagged
@@ -66,7 +67,7 @@ module Minesweeper
       tile.to_s
     end
 
-    def reveal(position)
+    def reveal(position = @cursor_position)
       tile = self[position]
 
       if tile.reveal && tile.will_cascade?
@@ -76,17 +77,55 @@ module Minesweeper
       tile.to_s
     end
 
-    def valid_position?(position)
-      row, col = position
-      (0...@rows).include?(row) && (0...@cols).include?(col)
-    end
-
     def all_mines_found?
       safe_tiles = (@rows * @cols) - @mines
       safe_tiles == @grid.inject(0) { |acc, row| acc + row.count(&:revealed) }
     end
 
+    def move_cursor(direction)
+      case direction
+      when :up
+        cursor_up
+      when :down
+        cursor_down
+      when :left
+        cursor_left
+      when :right
+        cursor_right
+      else
+        nil
+      end
+    end
+
     private
+
+    def cursor_up
+      @cursor_position = [
+        [@cursor_position.first - 1, 0].max,
+        @cursor_position.last
+      ]
+    end
+
+    def cursor_down
+      @cursor_position = [
+        [@cursor_position.first + 1, @rows - 1].min,
+        @cursor_position.last
+      ]
+    end
+
+    def cursor_left
+      @cursor_position = [
+        @cursor_position.first,
+        [@cursor_position.last - 1, 0].max
+      ]
+    end
+
+    def cursor_right
+      @cursor_position = [
+        @cursor_position.first,
+        [@cursor_position.last + 1, @cols - 1].min
+      ]
+    end
 
     def display_width
       board_width = (@cols * COLUMN_WIDTH) + (@cols + 1)
@@ -101,8 +140,14 @@ module Minesweeper
       label.join.rjust(display_width - 2)
     end
 
-    def parse_row(row)
-      parsed_row = row.map(&:to_s).join("|".black.on_white)
+    def parse_row(row, row_index)
+      parsed_row = row.map.with_index do |tile, col_index|
+        if @cursor_position == [row_index, col_index]
+          ">#{tile.to_s.uncolorize[1]}<"
+        else
+          tile.to_s
+        end
+      end.join("|".black.on_white)
     end
 
     def cascade_reveal(tile_position)

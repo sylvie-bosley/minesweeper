@@ -32,9 +32,10 @@ module Minesweeper
       expert: [[16,	30],	99],
     }
     VALID_YESNO = ["yes", "y", "no", "n"]
-    COMMANDS = [:r, :f, :s, :h, :e]
+    COMMANDS = [:r, :f, :s, :h, :x]
+    MOVEMENT_KEYS = [:up, :down, :left, :right]
     private_constant :SAVE_FOLDER, :SAVE_EXT, :DIFFICULTY_LEVELS,
-                     :VALID_YESNO, :COMMANDS
+                     :VALID_YESNO, :COMMANDS, :MOVEMENT_KEYS
 
     def initialize(save_to_load)
       if save_to_load.nil?
@@ -47,28 +48,36 @@ module Minesweeper
     end
 
     def run
-      game_over = false
-      input_stream = Remedy::Interaction.new
+      @board.render
+      Remedy::Interaction.new.loop do |player_action|
+        if MOVEMENT_KEYS.include?(player_action.name)
+          @board.move_cursor(player_action.name)
+        end
 
-      input_stream.loop do |player_action|
-
-        action_result = perform_action(player_action)
+        if COMMANDS.include?(player_action.name)
+          action_result = perform_action(player_action.name)
+        else
+          action_result = nil
+        end
 
         @board.render
 
         if action_result == Tile::MINE
-          game_over = true
           puts "Game over!"
           break
         elsif @board.all_mines_found?
-          game_over = true
           puts "You win!"
           break
         end
       end
+
+      print "Press ENTER to exit..."
+      gets
+      system "clear"
+      exit 0
     rescue Remedy::Keyboard::ControlC
       Remedy::ANSI.cursor.show!
-      save_and_exit
+      save_and_exit?
       system "clear"
       exit 0
     ensure
@@ -77,7 +86,7 @@ module Minesweeper
 
     private
 
-    def save_and_exit
+    def save_and_exit?
       confirmation = ""
 
       until VALID_YESNO.include?(confirmation)
@@ -89,6 +98,9 @@ module Minesweeper
 
       if confirmation == "yes" || confirmation == "y"
         perform_action(:s)
+        return true
+      else
+        return false
       end
     end
 
@@ -122,25 +134,21 @@ module Minesweeper
       DIFFICULTY_LEVELS[cursor]
     end
 
-    def perform_action(command, position)
+    def perform_action(command)
       case command
-      when "reveal"
-        @board.reveal(position)
-      when "flag"
-        @board.toggle_flag(position)
-      when "save"
-        @board.render
-
+      when :r
+        @board.reveal
+      when :f
+        @board.toggle_flag
+      when :s
         save_name = get_save_name
         return if save_name.empty?
 
         if confirm_save?(save_name)
           save_game(@board, "#{SAVE_FOLDER}#{save_name}#{SAVE_EXT}")
         end
-      when "exit"
-        @board.render
-
-        if confirm_exit?
+      when :x
+        if save_and_exit? || confirm_exit?
           system "clear"
           exit 0
         end
