@@ -20,7 +20,11 @@ require_relative "lib/minesweeper_game"
 
 include Minesweeper
 
-save_name = ARGV.shift.strip if ARGV.shift == "-l"
+if ARGV.shift == "-l"
+  save_to_load = ARGV.shift.strip
+else
+  save_to_load = nil
+end
 ARGV.clear
 
 system "clear"
@@ -52,14 +56,5 @@ if copyright_input == "warranty"
 end
 system "clear"
 
-if save_name.nil?
-  save_file = nil
-  difficulty = MineGame.get_difficulty
-else
-  sanitized_name = Zaru.sanitize!(save_name, fallback: "")
-  save_file = "#{MineGame::SAVE_FOLDER}#{sanitized_name}#{MineGame::SAVE_EXT}"
-  difficulty = nil
-end
-
-game = MineGame.new(difficulty, save_file)
+game = MineGame.new(save_to_load)
 game.run

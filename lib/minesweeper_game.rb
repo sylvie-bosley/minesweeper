@@ -16,6 +16,7 @@
 
 # I can be reached by email at pierce-bosley@gmail.com
 
+require "remedy"
 require_relative "board"
 require_relative "save_load"
 
@@ -25,7 +26,6 @@ module Minesweeper
 
     SAVE_FOLDER = "saved_games/"
     SAVE_EXT = ".sav"
-
     DIFFICULTY_LEVELS = {
       "beginner" => [[9, 9], 10],
       "b" => [[9, 9], 10],
@@ -37,34 +37,25 @@ module Minesweeper
     VALID_YESNO = ["yes", "y", "no", "n"]
     POSITION_COMMANDS = ["flag", "f", "reveal", "r"]
     POSITIONLESS_COMMANDS = ["save", "s", "exit", "e", "help", "h"]
-    private_constant :DIFFICULTY_LEVELS, :VALID_YESNO, :POSITION_COMMANDS,
-                     :POSITIONLESS_COMMANDS
+    private_constant :SAVE_FOLDER, :SAVE_EXT, :DIFFICULTY_LEVELS, :VALID_YESNO,
+                     :POSITION_COMMANDS, :POSITIONLESS_COMMANDS
 
-    def self.get_difficulty
-      difficulty = ""
-
-      until DIFFICULTY_LEVELS.has_key?(difficulty)
-        puts "Choose a difficulty level:"
-        puts "(b)eginner, (i)ntermediate, or (e)xpert"
-        print "> "
-        difficulty = gets.chomp.downcase
-      end
-
-      DIFFICULTY_LEVELS[difficulty]
-    end
-
-    def initialize(difficulty, load_path)
-      if load_path.nil?
-        @board = Board.new(*difficulty)
+    def initialize(save_to_load)
+      if save_to_load.nil?
+        @board = Board.new(*get_difficulty)
       else
+        sanitized_name = sanitize_file_name!(save_to_load)
+        load_path = "#{SAVE_FOLDER}#{sanitized_name}#{SAVE_EXT}"
         @board = load_save_game(load_path)
       end
+      @frame_start = 0
     end
 
     def run
       game_over = false
 
       until game_over
+        @frame_start = update_frame_start_time
         @board.render
         player_action = get_player_action
         action_result = perform_action(*player_action)
@@ -89,6 +80,18 @@ module Minesweeper
 
     private
 
+    def get_difficulty
+      difficulty = ""
+
+      until DIFFICULTY_LEVELS.has_key?(difficulty)
+        puts "Choose a difficulty level:"
+        puts "(b)eginner, (i)ntermediate, or (e)xpert"
+        print "> "
+        difficulty = gets.chomp.downcase
+      end
+
+      DIFFICULTY_LEVELS[difficulty]
+    end
     def perform_action(command, position)
       case command
       when "reveal"
