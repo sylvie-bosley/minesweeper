@@ -60,6 +60,7 @@ module Minesweeper
 
     def run
       game_over = false
+
       until game_over
         @board.render
         player_action = get_player_action
@@ -68,12 +69,19 @@ module Minesweeper
           game_over = true
           @board.render
           puts "Game over!"
+          break
         elsif @board.all_mines_found?
           game_over = true
           @board.render
           puts "You win!"
+          break
         end
       end
+
+      print "Press ENTER to exit..."
+      gets
+      system "clear"
+      exit 0
     end
 
     private
@@ -97,6 +105,7 @@ module Minesweeper
         @board.render
 
         if confirm_exit?
+          system "clear"
           exit 0
         end
       else
