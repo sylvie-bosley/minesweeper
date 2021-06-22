@@ -51,12 +51,12 @@ module Minesweeper
 
     def run
       game_over = false
+      input_stream = Remedy::Interaction.new
 
-      until game_over
+      input_stream.loop do |player_action|
         delta_time = update_frame_times
 
-        player_action = get_player_action
-        action_result = perform_action(*player_action)
+        action_result = perform_action(player_action)
 
         @board.render
 
@@ -70,9 +70,30 @@ module Minesweeper
           break
         end
       end
+    rescue Remedy::Keyboard::ControlC
+      Remedy::ANSI.cursor.show!
+      save_and_exit
+      exit 0
+    ensure
+      Remedy::ANSI.cursor.show!
     end
 
     private
+
+    def save_and_exit
+      confirmation = ""
+
+      until VALID_YESNO.include?(confirmation)
+        puts "Exiting..."
+        puts "Would you like to save first, yes or no?"
+        print "> "
+        confirmation = gets.chomp
+      end
+
+      if confirmation == "yes" || confirmation == "y"
+        perform_action(:s)
+      end
+    end
 
     def get_difficulty
       choices = DIFFICULTY_LEVELS.keys
@@ -143,7 +164,7 @@ module Minesweeper
 
     def get_save_name
       puts "Enter a name for the save"
-      puts "or press ENTER to return"
+      puts "Enter a blank name to cancel"
       print "> "
       sanitize_file_name!(gets.chomp)
     end
@@ -190,56 +211,6 @@ module Minesweeper
             "\nby a comma. Examples:\n\n\treveal 14,2\n\tf 2,0\n\nPress ENTER "\
             "to return..."
       gets
-    end
-
-    def get_player_action
-      action = ""
-
-      until valid_input?(action)
-        puts "Enter an action (or \"help\" for instructions)"
-        print "> "
-        action = gets.chomp.downcase
-      end
-
-      parse_action(action)
-    end
-
-    def valid_input?(input)
-      command, position = input.split(" ")
-      return true if POSITIONLESS_COMMANDS.include?(command)
-      return false if position.nil?
-
-      position = position.split(",")
-      return false unless position.length == 2
-
-      row, col = position
-      return false unless row.match?(/^\d+$/) && col.match?(/^\d+$/)
-
-      POSITION_COMMANDS.include?(command) &&
-        @board.valid_position?(position.map(&:to_i))
-    end
-
-    def parse_action(action)
-      temp_command, temp_position = action.split(" ")
-
-      case temp_command
-      when "reveal", "r"
-        command = "reveal"
-      when "flag", "f"
-        command = "flag"
-      when "save", "s"
-        command = "save"
-        return [command, nil]
-      when "exit", "e"
-        command = "exit"
-        return [command, nil]
-      else
-        command = "help"
-        return [command, nil]
-      end
-      position = temp_position.split(",").map(&:to_i)
-
-      [command, position]
     end
   end
 end
