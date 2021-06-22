@@ -44,9 +44,6 @@ module Minesweeper
         load_path = "#{SAVE_FOLDER}#{sanitized_name}#{SAVE_EXT}"
         @board = load_save_game(load_path)
       end
-
-      @last_frame_time = current_time
-      @current_frame_time = current_time - @last_frame_time
     end
 
     def run
@@ -54,7 +51,6 @@ module Minesweeper
       input_stream = Remedy::Interaction.new
 
       input_stream.loop do |player_action|
-        delta_time = update_frame_times
 
         action_result = perform_action(player_action)
 
@@ -73,6 +69,7 @@ module Minesweeper
     rescue Remedy::Keyboard::ControlC
       Remedy::ANSI.cursor.show!
       save_and_exit
+      system "clear"
       exit 0
     ensure
       Remedy::ANSI.cursor.show!
@@ -123,16 +120,6 @@ module Minesweeper
       end
 
       DIFFICULTY_LEVELS[cursor]
-    end
-
-    def update_frame_times
-      @last_frame_time = @current_frame_time
-      @current_frame_time = current_time
-      @current_frame_time - @last_frame_time
-    end
-
-    def current_time
-      Process.clock_gettime(Process::CLOCK_MONOTONIC)
     end
 
     def perform_action(command, position)
