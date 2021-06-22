@@ -16,9 +16,9 @@ module SaveLoad
     exit 1
   end
 
-  def save_game(save_path)
+  def save_game(save_object, save_path)
     File.open(save_path, "w") do |save_file|
-      YAML.dump(@board, save_file)
+      YAML.dump(save_object, save_file)
     end
   rescue IOError, SystemCallError
     puts "An unknown error occurred while trying to save the game."

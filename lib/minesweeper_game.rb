@@ -91,7 +91,7 @@ module Minesweeper
         return if save_name.empty?
 
         if confirm_save?(save_name)
-          save_game("#{SAVE_FOLDER}#{save_name}#{SAVE_EXT}")
+          save_game(@board, "#{SAVE_FOLDER}#{save_name}#{SAVE_EXT}")
         end
       when "exit"
         @board.render
