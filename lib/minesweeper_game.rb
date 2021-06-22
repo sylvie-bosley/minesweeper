@@ -75,16 +75,33 @@ module Minesweeper
     private
 
     def get_difficulty
-      difficulty = ""
+      choices = DIFFICULTY_LEVELS.keys
+      cursor = choices.first
+      key = Remedy::Key.new("V")
+      until key.name == :control_m
+        system "clear"
 
-      until DIFFICULTY_LEVELS.has_key?(difficulty)
         puts "Choose a difficulty level:"
-        puts "(b)eginner, (i)ntermediate, or (e)xpert"
-        print "> "
-        difficulty = gets.chomp.downcase
+
+        print "> " if cursor == :beginner
+        puts "beginner"
+        print "> " if cursor == :intermediate
+        puts "intermediate"
+        print "> " if cursor == :expert
+        puts "expert"
+
+        next unless key = Remedy::Interaction.new.get_key
+
+        if key.name == :down
+          choices.rotate!
+          cursor = choices.first
+        elsif key.name == :up
+          choices.rotate!(-1)
+          cursor = choices.first
+        end
       end
 
-      DIFFICULTY_LEVELS[difficulty]
+      DIFFICULTY_LEVELS[cursor]
     end
 
     def update_frame_times
