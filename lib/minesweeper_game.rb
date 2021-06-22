@@ -16,11 +16,13 @@
 
 # I can be reached by email at pierce-bosley@gmail.com
 
-require "zaru"
 require_relative "board"
+require_relative "save_load"
 
 module Minesweeper
   class MineGame
+    include SaveLoad
+
     SAVE_FOLDER = "saved_games/"
     SAVE_EXT = ".sav"
 
@@ -48,11 +50,11 @@ module Minesweeper
       DIFFICULTY_LEVELS[difficulty]
     end
 
-    def initialize(difficulty, save_file)
-      if save_file.nil?
+    def initialize(difficulty, load_path)
+      if load_path.nil?
         @board = Board.new(*difficulty)
       else
-        @board = load_save_game(save_file)
+        @board = load_save_game(load_path)
       end
     end
 
@@ -76,35 +78,6 @@ module Minesweeper
 
     private
 
-    def load_save_game(save_file)
-      begin
-        YAML.load(File.read(save_file))
-      rescue Errno::ENOENT
-        puts "Requested save game does not exist!"
-        print "Press ENTER to exit..."
-        gets
-        exit 1
-      rescue IOError, SystemCallError
-        puts "An unknown error occurred while trying to load the game."
-        print "Press ENTER to exit..."
-        gets
-        exit 1
-      end
-    end
-
-    def save_game(save_name)
-      begin
-        File.open("#{SAVE_FOLDER}#{save_name}#{SAVE_EXT}", "w") do |save_file|
-          YAML.dump(@board, save_file)
-        end
-      rescue IOError, SystemCallError
-        puts "An unknown error occurred while trying to save the game."
-        puts "Game was not saved!"
-        print "Press ENTER to return..."
-        gets
-      end
-    end
-
     def perform_action(command, position)
       case command
       when "reveal"
@@ -118,7 +91,7 @@ module Minesweeper
         return if save_name.empty?
 
         if confirm_save?(save_name)
-          save_game(save_name)
+          save_game("#{SAVE_FOLDER}#{save_name}#{SAVE_EXT}")
         end
       when "exit"
         @board.render
@@ -135,7 +108,7 @@ module Minesweeper
       puts "Enter a name for the save"
       puts "or press ENTER to return"
       print "> "
-      Zaru.sanitize!(gets.chomp, fallback: "")
+      sanitize_file_name!(gets.chomp)
     end
 
     def confirm_save?(save_name)
