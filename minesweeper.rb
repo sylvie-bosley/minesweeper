@@ -58,3 +58,8 @@ system "clear"
 
 game = MineGame.new(save_to_load)
 game.run
+
+print "Press ENTER to exit..."
+gets
+system "clear"
+exit 0

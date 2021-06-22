@@ -27,18 +27,14 @@ module Minesweeper
     SAVE_FOLDER = "saved_games/"
     SAVE_EXT = ".sav"
     DIFFICULTY_LEVELS = {
-      "beginner" => [[9, 9], 10],
-      "b" => [[9, 9], 10],
-      "intermediate" => [[16, 16],	40],
-      "i" => [[16, 16],	40],
-      "expert" => [[16,	30],	99],
-      "e" => [[16,	30],	99]
+      beginner: [[9, 9], 10],
+      intermediate: [[16, 16],	40],
+      expert: [[16,	30],	99],
     }
     VALID_YESNO = ["yes", "y", "no", "n"]
-    POSITION_COMMANDS = ["flag", "f", "reveal", "r"]
-    POSITIONLESS_COMMANDS = ["save", "s", "exit", "e", "help", "h"]
-    private_constant :SAVE_FOLDER, :SAVE_EXT, :DIFFICULTY_LEVELS, :VALID_YESNO,
-                     :POSITION_COMMANDS, :POSITIONLESS_COMMANDS
+    COMMANDS = [:r, :f, :s, :h, :e]
+    private_constant :SAVE_FOLDER, :SAVE_EXT, :DIFFICULTY_LEVELS,
+                     :VALID_YESNO, :COMMANDS
 
     def initialize(save_to_load)
       if save_to_load.nil?
@@ -48,34 +44,32 @@ module Minesweeper
         load_path = "#{SAVE_FOLDER}#{sanitized_name}#{SAVE_EXT}"
         @board = load_save_game(load_path)
       end
-      @frame_start = 0
+
+      @last_frame_time = current_time
+      @current_frame_time = current_time - @last_frame_time
     end
 
     def run
       game_over = false
 
       until game_over
-        @frame_start = update_frame_start_time
-        @board.render
+        delta_time = update_frame_times
+
         player_action = get_player_action
         action_result = perform_action(*player_action)
+
+        @board.render
+
         if action_result == Tile::MINE
           game_over = true
-          @board.render
           puts "Game over!"
           break
         elsif @board.all_mines_found?
           game_over = true
-          @board.render
           puts "You win!"
           break
         end
       end
-
-      print "Press ENTER to exit..."
-      gets
-      system "clear"
-      exit 0
     end
 
     private
@@ -92,6 +86,17 @@ module Minesweeper
 
       DIFFICULTY_LEVELS[difficulty]
     end
+
+    def update_frame_times
+      @last_frame_time = @current_frame_time
+      @current_frame_time = current_time
+      @current_frame_time - @last_frame_time
+    end
+
+    def current_time
+      Process.clock_gettime(Process::CLOCK_MONOTONIC)
+    end
+
     def perform_action(command, position)
       case command
       when "reveal"
