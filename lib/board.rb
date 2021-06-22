@@ -36,7 +36,7 @@ module Minesweeper
       board_bottom = "#{line.force_encoding("utf-8") * (board_width)}"
       remaining_mines = "#{@mines - @flags} mines remain"
 
-      system("clear")
+      system "clear"
 
       puts columns_label
       puts board_top.rjust(display_width)

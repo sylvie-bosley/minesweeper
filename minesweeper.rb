@@ -23,7 +23,7 @@ include Minesweeper
 save_name = ARGV.shift.strip if ARGV.shift == "-l"
 ARGV.clear
 
-system("clear")
+system "clear"
 puts "Pierce's Minesweeper  Copyright (C) 2021  Thomas Pierce Bosley\n"\
      "This program comes with ABSOLUTELY NO WARRANTY; for details type "\
      "`warranty'.\nThis is free software, and you are welcome to redistribute "\
@@ -32,7 +32,7 @@ print "> "
 copyright_input = gets.chomp
 
 if copyright_input == "warranty"
-  system("clear")
+  system "clear"
   puts "15. Disclaimer of Warranty.\n\n"\
        "  THERE IS NO WARRANTY FOR THE PROGRAM, TO THE EXTENT PERMITTED BY\n"\
        "APPLICABLE LAW.  EXCEPT WHEN OTHERWISE STATED IN WRITING THE "\
@@ -50,7 +50,7 @@ if copyright_input == "warranty"
   print "> "
   gets
 end
-system("clear")
+system "clear"
 
 if save_name.nil?
   save_file = nil

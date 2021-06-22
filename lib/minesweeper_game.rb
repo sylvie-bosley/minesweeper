@@ -138,7 +138,7 @@ module Minesweeper
     end
 
     def show_help
-      system("clear")
+      system "clear"
       print "You must reveal all the safe tiles, but watch out because\n"\
             "revealing a mine means game over!\n\nAvailable commands:\n\n\t"\
             "Reveal - reveal a tile.\n\t\tThe number on the tile indicates the"\
