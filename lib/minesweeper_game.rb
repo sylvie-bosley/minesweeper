@@ -76,11 +76,13 @@ module Minesweeper
       system "clear"
       exit 0
     rescue Remedy::Keyboard::ControlC
-      Remedy::ANSI.cursor.show!
       save_and_exit?
       system "clear"
       exit 0
     ensure
+      Remedy::Console.cooked!
+      Remedy::ANSI.cursor.home!
+      Remedy::ANSI.command.clear_down!
       Remedy::ANSI.cursor.show!
     end
 
@@ -93,12 +95,12 @@ module Minesweeper
         puts "Exiting..."
         puts "Would you like to save first, yes or no?"
         print "> "
+        Remedy::ANSI.cursor.show!
         confirmation = gets.chomp
       end
 
       if confirmation == "yes" || confirmation == "y"
-        perform_action(:s)
-        return true
+        return perform_action(:s)
       else
         return false
       end
@@ -142,10 +144,11 @@ module Minesweeper
         @board.toggle_flag
       when :s
         save_name = get_save_name
-        return if save_name.empty?
+        return false if save_name.empty?
 
         if confirm_save?(save_name)
           save_game(@board, "#{SAVE_FOLDER}#{save_name}#{SAVE_EXT}")
+          return true
         end
       when :x
         if save_and_exit? || confirm_exit?
@@ -161,6 +164,7 @@ module Minesweeper
       puts "Enter a name for the save"
       puts "Enter a blank name to cancel"
       print "> "
+      Remedy::ANSI.cursor.show!
       sanitize_file_name!(gets.chomp)
     end
 
@@ -172,6 +176,7 @@ module Minesweeper
         puts "File already exists"
         puts "Would you like to overwrite, yes or no?"
         print "> "
+        Remedy::ANSI.cursor.show!
         confirmation = gets.chomp.downcase
       end
 
@@ -184,6 +189,7 @@ module Minesweeper
         puts "All unsaved progress will be lost"
         puts "Are you sure you would like to exit, yes or no?"
         print "> "
+        Remedy::ANSI.cursor.show!
         confirmation = gets.chomp.downcase
       end
 
