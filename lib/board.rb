@@ -16,7 +16,6 @@
 
 # I can be reached by email at pierce-bosley@gmail.com
 
-require "yaml"
 require_relative "tile"
 
 module Minesweeper
