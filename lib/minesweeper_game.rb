@@ -64,7 +64,7 @@ module Minesweeper
         @board.render
         player_action = get_player_action
         action_result = perform_action(*player_action)
-        if action_result == "@"
+        if action_result == Tile::MINE
           game_over = true
           @board.render
           puts "Game over!"

@@ -16,13 +16,16 @@
 
 # I can be reached by email at pierce-bosley@gmail.com
 
+require "colorize"
+
 module Minesweeper
   class Tile
-    HIDDEN = "#"
-    EMPTY = " "
-    MINE = "@"
-    FLAG = "F"
-    private_constant :HIDDEN, :EMPTY, :MINE, :FLAG
+    MINE = " @ ".black.on_light_black
+
+    HIDDEN = "   ".black.on_white
+    EMPTY = "   ".on_light_black
+    FLAG = " F ".light_red.on_white
+    private_constant :HIDDEN, :EMPTY, :FLAG
 
     attr_reader :adjacent_mines, :revealed, :flagged, :mine
 
@@ -68,7 +71,32 @@ module Minesweeper
       return HIDDEN unless @revealed
       return MINE if @mine
       return EMPTY if @adjacent_mines.zero?
-      @adjacent_mines.to_s
+      colorized_number(@adjacent_mines.to_s.center(3)).on_light_black
+    end
+
+    private
+
+    def colorized_number(tile_string)
+      case tile_string[1].to_i
+      when 1
+        tile_string.light_blue
+      when 2
+        tile_string.light_green
+      when 3
+        tile_string.light_red
+      when 4
+        tile_string.magenta
+      when 5
+        tile_string.red
+      when 6
+        tile_string.cyan
+      when 7
+        tile_string.black
+      when 8
+        tile_string.white
+      else
+        nil
+      end
     end
   end
 end
