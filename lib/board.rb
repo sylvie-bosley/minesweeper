@@ -20,6 +20,9 @@ require_relative "tile"
 
 module Minesweeper
   class Board
+    COLUMN_WIDTH = 3
+    private_constant :COLUMN_WIDTH
+
     def initialize(dimensions, mines)
       @rows = dimensions.first
       @cols = dimensions.last
@@ -29,23 +32,22 @@ module Minesweeper
     end
 
     def render
-      line = "\u203E"
-      col_width, board_width, display_width = generate_formatting_widths
-      columns_label = generate_cols_label(col_width, display_width)
-      board_top = "#{"_" * (board_width)}"
-      board_bottom = "#{line.force_encoding("utf-8") * (board_width)}"
+      columns_label = generate_cols_label(display_width)
+      board_side = "|".black.on_white
+      divider_row = "   " << "|#{"---|" * @cols}".black.on_white
       remaining_mines = "#{@mines - @flags} mines remain"
 
       system "clear"
 
       puts columns_label
-      puts board_top.rjust(display_width)
 
       @grid.each_with_index do |row, index|
-        puts "#{index.to_s.rjust(2)} |#{parse_row(row, col_width)}|"
+        puts divider_row
+        board_row = "#{board_side}#{parse_row(row)}#{board_side}"
+        puts "#{index.to_s.rjust(2)} #{board_row}"
       end
+      puts divider_row
 
-      puts board_bottom.rjust(display_width)
       puts remaining_mines.center(display_width)
       puts
     end
@@ -86,36 +88,21 @@ module Minesweeper
 
     private
 
-    def generate_formatting_widths
-      if @cols < 10
-        col_width = 2
-      else
-        col_width = 3
-      end
-
-      board_width = col_width * (@cols - 1) + 3
-      display_width = board_width + 3
-
-      [col_width, board_width, display_width]
+    def display_width
+      board_width = (@cols * COLUMN_WIDTH) + (@cols + 1)
+      board_width + 3
     end
 
-    def generate_cols_label(col_width, display_width)
+    def generate_cols_label(display_width)
       label = (0...@cols).to_a.map do |label|
-        label.to_s.rjust(col_width)
+        label.to_s.rjust(COLUMN_WIDTH + 1)
       end
 
-      label.join.rjust(display_width - 1)
+      label.join.rjust(display_width - 2)
     end
 
-    def parse_row(row, col_width)
-      parsed_row = row.map.with_index do |tile, col_index|
-        if col_index.zero?
-          tile.to_s
-        else
-          tile.to_s.rjust(col_width) unless col_index.zero?
-        end
-      end
-      parsed_row.join
+    def parse_row(row)
+      parsed_row = row.map(&:to_s).join("|".black.on_white)
     end
 
     def cascade_reveal(tile_position)
