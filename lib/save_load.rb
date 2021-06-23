@@ -20,7 +20,7 @@ require "yaml"
 require "zaru"
 
 module SaveLoad
-  def load_save_game(load_path)
+  def self.load_save_game(load_path)
     YAML.load(File.read(load_path))
   rescue Errno::ENOENT
     puts "Requested save game does not exist!"
@@ -34,7 +34,7 @@ module SaveLoad
     exit 1
   end
 
-  def save_game(save_object, save_path)
+  def self.save_game(save_object, save_path)
     File.open(save_path, "w") do |save_file|
       YAML.dump(save_object, save_file)
     end
@@ -45,7 +45,7 @@ module SaveLoad
     gets
   end
 
-  def sanitize_file_name!(file_name)
+  def self.sanitize_file_name!(file_name)
     Zaru.sanitize!(file_name, fallback: "")
   end
 end
