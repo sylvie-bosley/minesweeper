@@ -23,8 +23,8 @@ module Minesweeper
   class MineGame
     include SaveLoad
 
-    SAVE_FOLDER = "saved_games/"
-    SAVE_EXT = ".sav"
+    SAVE_FOLDER = "saved_games/".freeze
+    SAVE_EXT = ".sav".freeze
 
     DIFFICULTY_LEVELS = {
       "beginner" => [[9, 9], 10],
@@ -33,10 +33,10 @@ module Minesweeper
       "i" => [[16, 16],	40],
       "expert" => [[16,	30],	99],
       "e" => [[16,	30],	99]
-    }
-    VALID_YESNO = ["yes", "y", "no", "n"]
-    POSITION_COMMANDS = ["flag", "f", "reveal", "r"]
-    POSITIONLESS_COMMANDS = ["save", "s", "exit", "e", "help", "h"]
+    }.freeze
+    VALID_YESNO = ["yes", "y", "no", "n"].freeze
+    POSITION_COMMANDS = ["flag", "f", "reveal", "r"].freeze
+    POSITIONLESS_COMMANDS = ["save", "s", "exit", "e", "help", "h"].freeze
     private_constant :DIFFICULTY_LEVELS, :VALID_YESNO, :POSITION_COMMANDS,
                      :POSITIONLESS_COMMANDS
 

@@ -20,7 +20,7 @@ require_relative "tile"
 
 module Minesweeper
   class Board
-    COLUMN_WIDTH = 3
+    COLUMN_WIDTH = 3.freeze
     private_constant :COLUMN_WIDTH
 
     def initialize(dimensions, mines)

@@ -20,11 +20,11 @@ require "colorize"
 
 module Minesweeper
   class Tile
-    MINE = " @ ".black.on_light_black
+    MINE = " @ ".black.on_light_black.freeze
 
-    HIDDEN = "   ".black.on_white
-    EMPTY = "   ".on_light_black
-    FLAG = " F ".light_red.on_white
+    HIDDEN = "   ".black.on_white.freeze
+    EMPTY = "   ".on_light_black.freeze
+    FLAG = " F ".light_red.on_white.freeze
     private_constant :HIDDEN, :EMPTY, :FLAG
 
     attr_reader :adjacent_mines, :revealed, :flagged, :mine
