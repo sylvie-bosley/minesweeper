@@ -22,16 +22,16 @@ require_relative "save_load"
 
 module Minesweeper
   class MineGame
-    SAVE_FOLDER = "saved_games/"
-    SAVE_EXT = ".sav"
+    SAVE_FOLDER = "saved_games/".freeze
+    SAVE_EXT = ".sav".freeze
     DIFFICULTY_LEVELS = {
       beginner: [[9, 9], 10],
       intermediate: [[16, 16],	40],
       expert: [[16,	30],	99],
-    }
-    VALID_YESNO = ["yes", "y", "no", "n"]
-    COMMANDS = [:r, :f, :s, :h, :x]
-    MOVEMENT_KEYS = [:up, :down, :left, :right]
+    }.freeze
+    VALID_YESNO = ["yes", "y", "no", "n"].freeze
+    COMMANDS = [:r, :f, :s, :h, :x].freeze
+    MOVEMENT_KEYS = [:up, :down, :left, :right].freeze
     private_constant :SAVE_FOLDER, :SAVE_EXT, :DIFFICULTY_LEVELS,
                      :VALID_YESNO, :COMMANDS, :MOVEMENT_KEYS
 
