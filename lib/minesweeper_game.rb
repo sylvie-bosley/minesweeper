@@ -22,8 +22,6 @@ require_relative "save_load"
 
 module Minesweeper
   class MineGame
-    include SaveLoad
-
     SAVE_FOLDER = "saved_games/"
     SAVE_EXT = ".sav"
     DIFFICULTY_LEVELS = {
@@ -37,40 +35,64 @@ module Minesweeper
     private_constant :SAVE_FOLDER, :SAVE_EXT, :DIFFICULTY_LEVELS,
                      :VALID_YESNO, :COMMANDS, :MOVEMENT_KEYS
 
-    def initialize(save_to_load)
-      if save_to_load.nil?
-        @board = Board.new(*get_difficulty)
-      else
-        sanitized_name = sanitize_file_name!(save_to_load)
-        load_path = "#{SAVE_FOLDER}#{sanitized_name}#{SAVE_EXT}"
-        @board = load_save_game(load_path)
-      end
+    def self.load_from_save(save_to_load)
+      sanitized_name = SaveLoad.sanitize_file_name!(save_to_load)
+      load_path = "#{SAVE_FOLDER}#{sanitized_name}#{SAVE_EXT}"
+      SaveLoad.load_save_game(load_path)
+    end
+
+    def initialize
+      @board = Board.new(*get_difficulty)
+      @elapsed_time = 0
     end
 
     def run
+      beginning_of_game = true
+      last_frame_time = 0
+      this_frame_time = 0
+      all_actions = MOVEMENT_KEYS + COMMANDS
+
       @board.render
+      puts "Press h for instructions"
+      puts
+
       Remedy::Interaction.new.loop do |player_action|
+        next unless all_actions.include?(player_action.name)
+
+        if beginning_of_game
+          beginning_of_game = false
+          this_frame_time = current_time
+        end
+
+        last_frame_time = this_frame_time
+        this_frame_time = current_time
+        @elapsed_time += this_frame_time - last_frame_time
+
+        action_result = nil
+
         if MOVEMENT_KEYS.include?(player_action.name)
           @board.move_cursor(player_action.name)
         end
 
         if COMMANDS.include?(player_action.name)
           action_result = perform_action(player_action.name)
-        else
-          action_result = nil
         end
 
         @board.render
+        puts "Press h for instructions"
+        puts
 
         if action_result == Tile::MINE
-          puts "Game over!"
+          puts "Game over :-("
           break
         elsif @board.all_mines_found?
-          puts "You win!"
+          puts "You win 8-)"
           break
         end
       end
 
+      puts "Your time was #{@elapsed_time.round}"
+      puts
       print "Press ENTER to exit..."
       gets
       system "clear"
@@ -87,6 +109,10 @@ module Minesweeper
     end
 
     private
+
+    def current_time
+      Process.clock_gettime(Process::CLOCK_MONOTONIC)
+    end
 
     def save_and_exit?
       confirmation = ""
@@ -110,6 +136,7 @@ module Minesweeper
       choices = DIFFICULTY_LEVELS.keys
       cursor = choices.first
       key = Remedy::Key.new("V")
+
       until key.name == :control_m
         system "clear"
 
@@ -147,7 +174,7 @@ module Minesweeper
         return false if save_name.empty?
 
         if confirm_save?(save_name)
-          save_game(@board, "#{SAVE_FOLDER}#{save_name}#{SAVE_EXT}")
+          SaveLoad.save_game(self, "#{SAVE_FOLDER}#{save_name}#{SAVE_EXT}")
           return true
         end
       when :x
@@ -165,7 +192,7 @@ module Minesweeper
       puts "Enter a blank name to cancel"
       print "> "
       Remedy::ANSI.cursor.show!
-      sanitize_file_name!(gets.chomp)
+      SaveLoad.sanitize_file_name!(gets.chomp)
     end
 
     def confirm_save?(save_name)
@@ -199,18 +226,17 @@ module Minesweeper
     def show_help
       system "clear"
       print "You must reveal all the safe tiles, but watch out because\n"\
-            "revealing a mine means game over!\n\nAvailable commands:\n\n\t"\
-            "Reveal - reveal a tile.\n\t\tThe number on the tile indicates the"\
-            " number of\n\t\tadjacent tiles that contain mines.\n\tFlag - flag"\
-            "/unflag a suspected mine.\n\t\tFlagged tiles cannot be revealed "\
-            "until they are\n\t\tunflagged so you won't accidentally reveal "\
-            "them.\n\tSave - save your game for later loading.\n\t\tTo load a "\
-            "save game use the -l argument, followed\n\t\tby the name of the "\
-            "game to load, when launching the game.\n\tExit - exits the game\n"\
-            "\nYou may enter commands using just their first letter too.\n\n"\
-            "Each command must be followed by row and column numbers separated"\
-            "\nby a comma. Examples:\n\n\treveal 14,2\n\tf 2,0\n\nPress ENTER "\
-            "to return..."
+            "revealing a mine means game over! Use the arrow keys to\n"\
+            "navigate around the board. Move fast though because a timer\nis "\
+            "running while you play!\n\nAvailable commands:\n\n\tr - reveal"\
+            " the current tile.\n\t\tThe number on the tile indicates the "\
+            "number of\n\t\tadjacent tiles that contain mines.\n\tf - "\
+            "flag/unflag a suspected mine.\n\t\tFlagged tiles cannot be "\
+            "revealed until they are\n\t\tunflagged so you won't accidentally "\
+            "reveal a mine.\n\ts - save your game for later loading.\n\t\tTo "\
+            "load a save game use the -l argument, followed\n\t\tby the name "\
+            "of the game to load, when launching\n\t\tthe game.\n\tx - exits "\
+            "the game\n\nPress ENTER to return..."
       gets
     end
   end

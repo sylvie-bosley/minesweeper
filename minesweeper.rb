@@ -56,7 +56,12 @@ if copyright_input == "warranty"
 end
 system "clear"
 
-game = MineGame.new(save_to_load)
+if save_to_load.nil?
+  game = MineGame.new
+else
+  game = MineGame.load_from_save(save_to_load)
+end
+
 game.run
 
 print "Press ENTER to exit..."
