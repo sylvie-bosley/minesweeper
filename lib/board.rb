@@ -36,7 +36,7 @@ module Minesweeper
       columns_label = generate_cols_label(display_width)
       board_side = "|".black.on_white
       divider_row = "   " << "|#{"---|" * @cols}".black.on_white
-      remaining_mines = "#{@mines - @flags} mines remain"
+      remaining_mines = "#{@mines - @flags} mines remain :-)"
 
       system "clear"
 
