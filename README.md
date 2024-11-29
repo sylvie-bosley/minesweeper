@@ -1,4 +1,4 @@
-Pierce's Minesweeper
+Sylvie's Minesweeper
 
 Simple console Minesweeper game.
 
